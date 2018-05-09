@@ -22,7 +22,7 @@ public class CheckDaoImpl implements CheckDao {
 		try {
 			conn = DBConnection.getConn();
 			// 这个判断条件还得修改····,第一次筛选之后，就得把推荐表的当前处理的hr,改为自己的
-			String sql = "SELECT reco_id,reco_name,emp_id,reco_mailbox,reco_current_status FROM recommender_table WHERE emp_id !=? AND reco_current_status =? AND (current_hr_id is null or current_hr_id=?)";
+			String sql = "SELECT reco_id,reco_name,emp_id,reco_mailbox,reco_current_status,reco_resume FROM recommender_table WHERE emp_id !=? AND reco_current_status =? AND (current_hr_id is null or current_hr_id=?)";
 			pstm = conn.prepareStatement(sql);
 			pstm.setInt(1, empId);
 			pstm.setString(2, currStatus);
@@ -37,6 +37,7 @@ public class CheckDaoImpl implements CheckDao {
 				reco.setEmpId(rs.getInt("emp_id"));
 				reco.setMail(rs.getString("reco_mailbox"));
 				reco.setCurrStatus(rs.getString("reco_current_status"));
+				reco.setResume(rs.getString("reco_resume"));
 				// 然后根据推荐人的empId去查看推荐人的姓名
 				sql = "select emp_fullname from emp_details_table where emp_id =?";
 				pstm = conn.prepareStatement(sql);

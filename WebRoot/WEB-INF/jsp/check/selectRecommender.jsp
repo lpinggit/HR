@@ -109,13 +109,20 @@
 												
 											</div>
 										</td>
-										<td width="12%" height="22"
+										<td width="10%" height="22"
 											background="resource/tabimages/bg.gif" bgcolor="#FFFFFF">
 											<div align="center">
 												<span class="STYLE1">基本信息</span>
 											</div>
 										</td>
-										<td width="15%" height="22"
+										<td width="7%" height="22"
+												background="resource/tabimages/bg.gif" bgcolor="#FFFFFF"
+												class="STYLE1">
+												<div align="center">
+													简历下载
+												</div>
+											</td>
+										<td width="10%" height="22"
 											background="resource/tabimages/bg.gif" bgcolor="#FFFFFF"
 											class="STYLE1">
 											<div align="center">
@@ -158,6 +165,12 @@
 													</div>
 												</div>
 											</td>
+											<td height="20" bgcolor="#FFFFFF">
+													<div align="center">
+														<span class="STYLE1"><a href="loadRecommenderDoc.do?fileName=${check.resume}">下载</a></span>
+													</div>
+												</td>
+											
 											<td height="20" bgcolor="#FFFFFF">
 												<div align="center">
 													<span class="STYLE4"><a href="modifyInterviewStatus.do?recoId=${check.recoId}&currentstatus=${check.currStatus}"><img
