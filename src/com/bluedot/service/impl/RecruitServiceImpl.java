@@ -121,9 +121,9 @@ public class RecruitServiceImpl implements RecruitService {
 		return recruitDao.getRecruitInfo();
 	}
 
-	public int getRecruitIdFromSequence() {
-		return recruitDao.getRecruitIdFromSequence();
-	}
+//	public int getRecruitIdFromSequence() {
+//		return recruitDao.getRecruitIdFromSequence();
+//	}
 
 	public RecruitInfo viewRecruitById(int recruitId) {
 		return recruitDao.viewRecruitById(recruitId);

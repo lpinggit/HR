@@ -10,7 +10,7 @@ public interface RecruitDao {
 	List<RecruitInfo> viewRecruitInfoByRole(int empId);
 	List<String> getAllmailBox();
 	RecruitInfo viewRecruitById(int recruitId);
-	int getRecruitIdFromSequence();
+	//int getRecruitIdFromSequence();
 	boolean saveRecruitInfo(RecruitInfo recruit);
 	boolean deleteRecruitInfo(String []recruitId);
 	boolean updateRecruitInfo(RecruitInfo recruit);

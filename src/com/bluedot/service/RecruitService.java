@@ -11,7 +11,7 @@ public interface RecruitService {
 	List<RecruitInfo> viewRecruitInfo();
 	List<RecruitInfo> viewRecruitInfoByRole(int empId);
 	RecruitInfo viewRecruitById(int recruitId);
-	int getRecruitIdFromSequence();
+	//int getRecruitIdFromSequence();
 	boolean modifyMark();
 	boolean saveRecruitInfo(RecruitInfo recruit);
 	boolean deleteRecruitInfo(String []recruitId);

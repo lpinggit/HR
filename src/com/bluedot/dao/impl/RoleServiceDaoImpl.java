@@ -32,7 +32,6 @@ public class RoleServiceDaoImpl implements RoleServiceDao {
 	String sql;
 	private Statement pstm2;
 	private ResultSet rs2;
-	private static int i;
 	// 查询所有的角色，通过调用存储过程
 	public SplitPage getAllRole(int curentPage) {
 		try {
@@ -109,43 +108,38 @@ public class RoleServiceDaoImpl implements RoleServiceDao {
 	 * 添加一个角色
 	 */
 	public boolean addRole(Role role) {
-		try {
 			conn = DBConnection.getConn();
-			conn.setAutoCommit(false);
-			sql = "insert into role_table values(?,?)";
-			pstm = conn.prepareStatement(sql);
-			
-			//System.out.println(role.getRoleName()+" "+getRoleIdFromSequence());
-			
-			pstm.setInt(1,getRoleIdFromSequence());
+			try {
+				conn.setAutoCommit(false);
+			} catch (SQLException e1) {
+				e1.printStackTrace();
+			}
+			String sql="SELECT role_id_seq.nextval FROM DUAL ";
+			int i = 0;
+			try {
+				pstm=conn.prepareStatement(sql);
+				rs=pstm.executeQuery();
+				while(rs.next()){
+					i=rs.getInt(1);
+				    }
+			System.out.println("输出是"+i);
+		    String sql1="insert into role_table values (?,?)";
+			pstm=conn.prepareStatement(sql1);
+			pstm.setInt(1, i);
 			pstm.setString(2, role.getRoleName());
 			int num = pstm.executeUpdate();
 			if (num > 0) {
 				conn.commit();
 				return true;
-			} else {
-
-				conn.rollback();
-				return false;
-			}
-
+			   } 
 		} catch (Exception e) {
-			try {
-				conn.rollback();
-			} catch (SQLException e1) {
-				e1.printStackTrace();
-			}
 			e.printStackTrace();
 		} finally {
-			DBConnection.close(pstm, conn, null);
+			DBConnection.close(pstm, conn, rs);
 		}
 		return false;
 	}
 
-	public int getRoleIdFromSequence() {
-		i++;
-		return i;
-	}
 	
 	public Set<Menu> getMenusByRoleId(int roleId) {
 		try {

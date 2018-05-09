@@ -27,7 +27,7 @@ public class RecoDaoImpl implements RecoDao {
 	ResultSet rs;
 	ResultSet rs1;
 	ResultSet rs2;
-	private static int i;
+	
 	public Map<Integer, String> getJobMap() {// 在插入初始数据的时候记得要提交数据，否则则无法查询到数据
 		try {
 			Map<Integer, String> map = new HashMap<Integer, String>();
@@ -79,13 +79,20 @@ public class RecoDaoImpl implements RecoDao {
 		try {
 			conn = DBConnection.getConn();
 			conn.setAutoCommit(false);
-			String sql = "INSERT INTO recommender_table (reco_id,reco_name,emp_id,job_id,major_id,"
+			String sql="SELECT reco_id_seq.nextval FROM DUAL ";
+			int i = 0;
+     		pstm=conn.prepareStatement(sql);
+			rs=pstm.executeQuery();
+			while(rs.next()){
+					i=rs.getInt(1);
+				   }
+			 sql = "INSERT INTO recommender_table (reco_id,reco_name,emp_id,job_id,major_id,"
 					+ "reco_sex,reco_pic,reco_degree,reco_graduated_from,reco_is_graduated,"
 					+ "reco_graduated_time,reco_phone,reco_mailbox,reco_skills,reco_resume,"
 					+ "reco_is_recommended,reco_current_status)"
 					+ "VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 			pstm = conn.prepareStatement(sql);
-			int reco_id=getRecoIdFromSequence();
+			int reco_id=i;
 			pstm.setInt(1,reco_id);
 			pstm.setString(2, reco.getRecoName());
 			pstm.setInt(3, reco.getEmpId());
@@ -155,10 +162,6 @@ public class RecoDaoImpl implements RecoDao {
 		return false;
 	}
 
-	public int getRecoIdFromSequence() {
-		i++;
-		return i;
-	}
 	
 	
 	/*

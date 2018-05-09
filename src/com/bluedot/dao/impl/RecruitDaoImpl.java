@@ -24,13 +24,20 @@ public class RecruitDaoImpl implements RecruitDao {
 	Connection conn;
 	PreparedStatement pstm;
 	ResultSet rs;
-    private static int i;
+
 	// 保存发布的招聘信息
 	public boolean saveRecruitInfo(RecruitInfo recruit) {
 		try {
 			conn = DBConnection.getConn();
 			conn.setAutoCommit(false);
-			String sql = "INSERT INTO RECRUIT_REQUIRE_TABLE(job_id,dept_id,emp_id,work_cate_id"
+			String sql="SELECT recruit_id_seq.nextval FROM DUAL ";
+			int i = 0;
+     		pstm=conn.prepareStatement(sql);
+			rs=pstm.executeQuery();
+			while(rs.next()){
+					i=rs.getInt(1);
+				   }
+		 sql = "INSERT INTO RECRUIT_REQUIRE_TABLE(job_id,dept_id,emp_id,work_cate_id"
 					+ ",recruit_number,job_location,work_type,deadline_date,work_experience"
 					+ ",job_description,job_skills,special_requirement,urgent_level,recruit_id)"
 					+ " VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
@@ -49,7 +56,7 @@ public class RecruitDaoImpl implements RecruitDao {
 			pstm.setString(12, recruit.getSpecialRequest());
 			pstm.setString(13, recruit.getIsUrgent());
 			//System.out.println("这里是否为空"+getRecruitIdFromSequence());
-			pstm.setInt(14, getRecruitIdFromSequence());
+			pstm.setInt(14, i);
 			int num = pstm.executeUpdate();
 			if (num > 0) {
 				conn.commit();
@@ -64,15 +71,12 @@ public class RecruitDaoImpl implements RecruitDao {
 			}
 			e.printStackTrace();
 		} finally {
-			DBConnection.close(pstm, conn, null);
+			DBConnection.close(pstm, conn, rs);
 		}
 		return false;
 	}
 
-	public int getRecruitIdFromSequence() {
-		i++;
-		return i;
-	}
+	
 
 	/*
 	 * 查看发布的招聘信息

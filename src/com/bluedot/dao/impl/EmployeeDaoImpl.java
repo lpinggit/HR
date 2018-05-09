@@ -30,7 +30,7 @@ public class EmployeeDaoImpl implements EmployeeDao {
 	String sql;
 	private Statement pstm2;
 	private ResultSet rs2;
-	private  static int i;
+
 	public Employee login(Employee employee) {
 
 		try {
@@ -129,10 +129,18 @@ public class EmployeeDaoImpl implements EmployeeDao {
 	public boolean addUser(Employee employee) {
 		try {
 			conn = DBConnection.getConn();
-			String sql = "INSERT INTO emp_table	VALUES(?,?,?,?,?)";
 			conn.setAutoCommit(false);
+			String sql="SELECT user_id_seq.nextval FROM DUAL ";
+			int i = 0;
+     		pstm=conn.prepareStatement(sql);
+			rs=pstm.executeQuery();
+			while(rs.next()){
+					i=rs.getInt(1);
+				   }
+			 sql = "INSERT INTO emp_table	VALUES(?,?,?,?,?)";
+			
 			pstm = conn.prepareStatement(sql);
-			int empid=getUserIdFromSequence();
+			int empid=i;
 			//System.out.println(getUserIdFromSequence(conn)+"角色Id正在插入···············");
 			pstm.setInt(1,empid);
 			
@@ -189,11 +197,6 @@ public class EmployeeDaoImpl implements EmployeeDao {
 		return false;
 	}
 
-	
-	public int getUserIdFromSequence() {
-		i++;
-		return i;
-	}
 	
 	// 查询用户信息
 
