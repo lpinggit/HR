@@ -94,13 +94,8 @@
 								<table width="100%" border="0" cellpadding="0" cellspacing="1"
 									bgcolor="b5d6e6">
 									<tr>
-										<td width="3%" height="22"
-											background="resource/tabimages/bg.gif" bgcolor="#FFFFFF">
-											<div align="center">
-												<input type="checkbox" name="checkbox" value="checkbox" />
-											</div>
-										</td>
-										<td width="3%" height="22"
+										
+										<td width="6%" height="22"
 											background="resource/tabimages/bg.gif" bgcolor="#FFFFFF">
 											<div align="center">
 												<span class="STYLE1">被推荐人ID</span>
@@ -129,11 +124,7 @@
 									</tr>
 									<c:forEach var="reco" items="${sessionScope.empSp.recoList}">
 										<tr>
-											<td height="20" bgcolor="#FFFFFF">
-												<div align="center">
-													<input type="checkbox" name="checkbox2" value="checkbox" />
-												</div>
-											</td>
+											
 											<td height="20" bgcolor="#FFFFFF">
 												<div align="center" class="STYLE1">
 													<div align="center">
