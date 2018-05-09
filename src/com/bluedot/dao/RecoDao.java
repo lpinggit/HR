@@ -16,6 +16,6 @@ public interface RecoDao {
 	Map<Integer,String> getMajorMap();
 	List<Recommender> getRecommender(int empId);//根据身份得到推荐人
 	List<Recommender> getReco(int empId);//查询自己的推荐的人
-	List<Recommender> getRecommenderCurrStatus(int empId);
-	SplitPage getAllReco(int curentPage);
+	SplitPage getRecommenderCurrStatus(int curentPage,int empId);
+	SplitPage getAllReco(int curentPage,int empId);
 }

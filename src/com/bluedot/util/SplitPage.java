@@ -5,6 +5,7 @@ import java.util.Set;
 
 import com.bluedot.po.Credit;
 import com.bluedot.po.Employee;
+import com.bluedot.po.Recommender;
 import com.bluedot.po.Role;
 
 public class SplitPage {
@@ -13,8 +14,16 @@ public class SplitPage {
 	Set<Employee> set;
 	List<Role> roleList;
 	List<Credit> creditlist;
-	
+	List<Recommender> recoList;
 
+
+	public List<Recommender> getRecoList() {
+		return recoList;
+	}
+
+	public void setRecoList(List<Recommender> recoList) {
+		this.recoList = recoList;
+	}
 
 	public final List<Role> getRoleList() {
 		return roleList;

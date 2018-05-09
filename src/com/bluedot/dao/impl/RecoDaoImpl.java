@@ -164,161 +164,7 @@ public class RecoDaoImpl implements RecoDao {
 
 	
 	
-	/*
-	 * 根据用户的登录的身份查询被推荐的信息，用户为admin可以查询所有的被推荐人的信息 ，其他用户只能查看到自己所推荐的被推荐人的信息。
-	 */
-	public List<Recommender> getRecommender(int empId) {
-		try {
-			conn = DBConnection.getConn();
-			// 首先根据empId判断他的角色，如果是管理员则可以查看所有被推荐人的信息，否则只能查看自己做推荐的人
-			String sql = "SELECT role_id FROM emp_table WHERE emp_id=?";
-			pstm = conn.prepareStatement(sql);
-			pstm.setInt(1, empId);
-			rs = pstm.executeQuery();
-			int roleId = 0;
-			if (rs.next())// 万一没有数据，会提示异常（结果集耗尽）
-			{
-				roleId = rs.getInt(1);
-			}
-			List<Recommender> list = new ArrayList<Recommender>();
-			if (roleId == 8888) {// 管理员身份
-				sql = "select rt.*,edt.emp_fullname as fullname,ct.cate_name as jobName,ctt.cate_name as majorName from recommender_table rt "
-						+ "left outer join emp_details_table edt on(rt.emp_id=edt.emp_id)"
-						+ "join categories_table ct on(rt.job_id=ct.cate_id) and ct.is_what_cate='B'"
-						+ "join categories_table ctt on (ctt.cate_id=rt.major_id) and ctt.is_what_cate='C'";
-				pstm = conn.prepareStatement(sql);
-				rs = pstm.executeQuery();
-				while (rs.next()) {
-					Recommender reco = new Recommender();
-					reco.setRecoId(rs.getInt(1));
-					reco.setRecoName(rs.getString(2));
-					reco.setEmpId(rs.getInt(3));
-					reco.setCurrentHrId(rs.getInt(4));
-					// reco.setJobId(rs.getInt(5));// 职位
-					reco
-							.setJobCate(new Categories(rs.getString("jobName"),
-									"B"));
-					// reco.setMajorId(rs.getInt(6));// 专业
-					reco.setMajorCate(new Categories(rs.getString("majorName"),
-							"C"));
-					reco.setSex(rs.getString(7));
-					reco.setPic(rs.getString(8));
-					reco.setRecoDegree(rs.getString(9));
-					reco.setGraduatedFrom(rs.getString(10));
-					reco.setIsGraduated(rs.getString(11));
-					reco.setGraduatedTime(rs.getDate(12));
-					reco.setPhone(rs.getString(13));
-					reco.setMail(rs.getString(14));
-					reco.setSkills(rs.getString(15));
-					reco.setResume(rs.getString(16));
-					reco.setIsRecommended(rs.getString(17));
-					reco.setCurrStatus(rs.getString(18));
-
-					// 当前处理的HR的ID进行查询姓名
-					sql = "select emp_fullname from  emp_details_table where emp_id=?";
-					pstm = conn.prepareStatement(sql);
-					pstm.setInt(1, rs.getInt(4));
-					rs1 = pstm.executeQuery();
-					String empFullName = null;
-					if (rs1.next()) {
-						empFullName = rs1.getString("emp_fullname");
-					}
-					System.out.println("当前处理HR的姓名：" + empFullName);
-					reco.setCurrentHrName(empFullName);
-
-					/*******************************/
-					String fullname = rs.getString("fullname");
-					EmpDetails empdt = new EmpDetails();
-					empdt.setFullname(fullname);
-					Employee emp = new Employee();
-					emp.setEmpDetails(empdt);
-					reco.setEmployee(emp);
-					list.add(reco);
-
-				}
-				return list;
-			} else {// 其他身份
-
-				// 首先判断该用户的详情表是否为空
-				sql = "select emp_fullname from emp_details_table where emp_id=?";
-				pstm = conn.prepareStatement(sql);
-				pstm.setInt(1, empId);
-				rs = pstm.executeQuery();
-				EmpDetails empdt = null;
-				Employee emp = null;
-				String fullname = null;
-				if (rs.next()) {
-					fullname = rs.getString(1);
-				}
-				if (fullname != null) {
-					empdt = new EmpDetails();
-					empdt.setFullname(fullname);
-					emp = new Employee();
-					emp.setEmpDetails(empdt);
-				}
-
-				sql = "select tt.* from (select rt.*,edt.emp_fullname as fullname,ct.cate_name as jobName,ctt.cate_name as majorName "
-						+ "from recommender_table rt left outer join emp_details_table edt on(rt.emp_id=edt.emp_id)  "
-						+ "join categories_table ct on(rt.job_id=ct.cate_id) and ct.is_what_cate='B' "
-						+ "join categories_table ctt on (ctt.cate_id=rt.major_id) and ctt.is_what_cate='C') tt "
-						+ "where tt.emp_id=?";
-				pstm = conn.prepareStatement(sql);
-				pstm.setInt(1, empId);
-				rs = pstm.executeQuery();
-				int currentHrId = 0;
-				while (rs.next()) {
-					Recommender reco = new Recommender();
-					reco.setRecoId(rs.getInt(1));
-					reco.setRecoName(rs.getString(2));
-					reco.setEmpId(rs.getInt(3));
-					reco.setCurrentHrId(rs.getInt(4));
-					// reco.setJobId(rs.getInt(5));// 职位
-					reco.setJobCate(new Categories(rs.getString("jobName"),
-									"B"));
-					// reco.setMajorId(rs.getInt(6));// 专业
-					reco.setMajorCate(new Categories(rs.getString("majorName"),
-							"C"));
-					reco.setSex(rs.getString(7));
-					reco.setPic(rs.getString(8));
-					reco.setRecoDegree(rs.getString(9));
-					reco.setGraduatedFrom(rs.getString(10));
-					reco.setIsGraduated(rs.getString(11));
-					reco.setGraduatedTime(rs.getDate(12));
-					reco.setPhone(rs.getString(13));
-					reco.setMail(rs.getString(14));
-					reco.setSkills(rs.getString(15));
-					reco.setResume(rs.getString(16));
-					reco.setIsRecommended(rs.getString(17));
-					reco.setCurrStatus(rs.getString(18));
-					if (emp != null) {
-						reco.setEmployee(emp);
-						currentHrId = rs.getInt(4);
-						sql = "select emp_fullname from  emp_details_table where emp_id=?";
-						pstm = conn.prepareStatement(sql);
-						pstm.setInt(1, currentHrId);
-						rs1 = pstm.executeQuery();
-						String empFullName = null;
-						if (rs1.next()) {
-							empFullName = rs1.getString("emp_fullname");
-						}
-						System.out.println("当前处理HR的姓名：" + empFullName);
-						reco.setCurrentHrName(empFullName);
-
-					}
-					list.add(reco);
-				}
-				return list;
-
-			}
-
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			DBConnection.close(pstm, conn, rs1);
-			DBConnection.close(pstm, conn, rs);
-		}
-		return null;
-	}
+	
 	
 		/*
 		 * 根绝empId查询出自己的推荐的人
@@ -364,9 +210,11 @@ public class RecoDaoImpl implements RecoDao {
 	/*
 	 * 员工查看自己推荐的被推荐人的当前状态
 	 */
-	public List<Recommender> getRecommenderCurrStatus(int empId) {
+	public SplitPage getRecommenderCurrStatus(int curentPage,int empId) {
 		try {
 			conn = DBConnection.getConn();
+			int totalRows = 0;
+			int totalPage=0;
 			// 首先根据empId判断他的角色，如果是管理员则可以查看所有被推荐人的信息，否则只能查看自己做推荐的人
 			String sql = "SELECT role_id FROM emp_table WHERE emp_id=?";
 			pstm = conn.prepareStatement(sql);
@@ -379,8 +227,20 @@ public class RecoDaoImpl implements RecoDao {
 			}
 			List<Recommender> list = new ArrayList<Recommender>();
 			if (roleId == 8888) {
-				sql = "select reco_id,reco_name,current_hr_id,reco_sex,reco_current_status from recommender_table";
+				 sql = "select count(*) from (select reco_id,reco_name,current_hr_id,reco_sex,reco_current_status from recommender_table)";
 				pstm = conn.prepareStatement(sql);
+				rs=pstm.executeQuery();
+				if(rs.next()){
+					 totalRows = rs.getInt(1);// 一共有多少条记录
+				}
+				 totalPage =(totalRows-1)/5+1 ;// 一共有几页
+				System.out.println("总的记录数" + totalRows);
+				System.out.println("总的页数" + totalPage);
+				
+				sql = "select * from (select e.*,rownum r from(select reco_id,reco_name,current_hr_id,reco_sex,reco_current_status from recommender_table)e) where r>(?-1)*5 and r<=?*5";
+				pstm = conn.prepareStatement(sql);
+				pstm.setInt(1, curentPage);
+				pstm.setInt(2, curentPage);
 				rs = pstm.executeQuery();
 				int currentHrId = 0;
 				while (rs.next()) {
@@ -400,11 +260,23 @@ public class RecoDaoImpl implements RecoDao {
 					}
 					list.add(reco);
 				}
-				return list;
+				
 			} else {
-				sql = "select reco_id,reco_name,current_hr_id,reco_sex,reco_current_status from recommender_table where emp_id =?";
+				 sql = "select count(*) from (select reco_id,reco_name,current_hr_id,reco_sex,reco_current_status from recommender_table where emp_id =?)";
+					pstm = conn.prepareStatement(sql);
+					pstm.setInt(1, empId);
+					rs=pstm.executeQuery();
+					if(rs.next()){
+						 totalRows = rs.getInt(1);// 一共有多少条记录
+					}
+					 totalPage =(totalRows-1)/5+1 ;// 一共有几页
+					System.out.println("总的记录数" + totalRows);
+					System.out.println("总的页数" + totalPage);
+				sql = "select * from (select e.*,rownum r from(select reco_id,reco_name,current_hr_id,reco_sex,reco_current_status from recommender_table where emp_id =?)e) where r>(?-1)*5 and r<=?*5";
 				pstm = conn.prepareStatement(sql);
 				pstm.setInt(1, empId);
+				pstm.setInt(2, curentPage);
+				pstm.setInt(3, curentPage);
 				rs = pstm.executeQuery();
 				int currentHrId = 0;
 				while (rs.next()) {
@@ -424,8 +296,13 @@ public class RecoDaoImpl implements RecoDao {
 					}
 					list.add(reco);
 				}
-				return list;
+				
 			}
+			SplitPage sp = new SplitPage();
+			sp.setTotalRows(totalRows);
+			sp.setTotalPage(totalPage);
+			sp.setRecoList(list);
+			return sp;
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -576,26 +453,193 @@ public class RecoDaoImpl implements RecoDao {
 
 	Statement st;
 	//分页
-	public SplitPage getAllReco(int curentPage) {
+	public SplitPage getAllReco(int curentPage,int empId) {
 		try {
 			Connection conn;
 			int totalRows = 0;
+			int totalPage=0;
 			conn = DBConnection.getConn();
-			String sql = "select count(*) from RECOMMENDER_TABLE";
-			PreparedStatement pstm = conn.prepareStatement(sql);
-			ResultSet rs=pstm.executeQuery();
-			if(rs.next()){
-				 totalRows = rs.getInt(1);// 一共有多少条记录
-			}
-			int totalPage =(totalRows-1)/5+1 ;// 一共有几页
-			System.out.println("总的记录数" + totalRows);
-			System.out.println("总的页数" + totalPage);
+			
 			// Set<Role> roleSet=new TreeSet<Role>(new MyComparator());
 			
+	
+			// 首先根据empId判断他的角色，如果是管理员则可以查看所有被推荐人的信息，否则只能查看自己做推荐的人
+		   String	sql = "SELECT role_id FROM emp_table WHERE emp_id=?";
+		   PreparedStatement  pstm = conn.prepareStatement(sql);
+			pstm.setInt(1, empId);
+			ResultSet rs = pstm.executeQuery();
+			int roleId = 0;
+			if (rs.next())// 万一没有数据，会提示异常（结果集耗尽）
+			{
+				roleId = rs.getInt(1);
+			}
+			List<Recommender> list = new ArrayList<Recommender>();
+			if (roleId == 8888) {// 管理员身份
+				  sql = "select count(*) from (select rt.*,edt.emp_fullname as fullname,ct.cate_name as jobName,ctt.cate_name as majorName from recommender_table rt "
+						+ "left outer join emp_details_table edt on(rt.emp_id=edt.emp_id)"
+						+ "join categories_table ct on(rt.job_id=ct.cate_id) and ct.is_what_cate='B'"
+						+ "join categories_table ctt on (ctt.cate_id=rt.major_id) and ctt.is_what_cate='C')";
+				pstm = conn.prepareStatement(sql);
+				rs=pstm.executeQuery();
+				if(rs.next()){
+					 totalRows = rs.getInt(1);// 一共有多少条记录
+				}
+				 totalPage =(totalRows-1)/5+1 ;// 一共有几页
+				System.out.println("总的记录数" + totalRows);
+				System.out.println("总的页数" + totalPage);
+				
+				
+				sql = "select * from (select e.*,rownum r from(select rt.*,edt.emp_fullname as fullname,ct.cate_name as jobName,ctt.cate_name as majorName from recommender_table rt "
+            + "left outer join emp_details_table edt on(rt.emp_id=edt.emp_id)"
+            + "join categories_table ct on(rt.job_id=ct.cate_id) and ct.is_what_cate='B'"
+            + "join categories_table ctt on (ctt.cate_id=rt.major_id) and ctt.is_what_cate='C')e) where r>(?-1)*5 and r<=?*5";
+				pstm = conn.prepareStatement(sql);
+				pstm.setInt(1, curentPage);
+				pstm.setInt(2, curentPage);
+				rs = pstm.executeQuery();
+				while (rs.next()) {
+					Recommender reco = new Recommender();
+					reco.setRecoId(rs.getInt(1));
+					reco.setRecoName(rs.getString(2));
+					reco.setEmpId(rs.getInt(3));
+					reco.setCurrentHrId(rs.getInt(4));
+					// reco.setJobId(rs.getInt(5));// 职位
+					reco
+							.setJobCate(new Categories(rs.getString("jobName"),
+									"B"));
+					// reco.setMajorId(rs.getInt(6));// 专业
+					reco.setMajorCate(new Categories(rs.getString("majorName"),
+							"C"));
+					reco.setSex(rs.getString(7));
+					reco.setPic(rs.getString(8));
+					reco.setRecoDegree(rs.getString(9));
+					reco.setGraduatedFrom(rs.getString(10));
+					reco.setIsGraduated(rs.getString(11));
+					reco.setGraduatedTime(rs.getDate(12));
+					reco.setPhone(rs.getString(13));
+					reco.setMail(rs.getString(14));
+					reco.setSkills(rs.getString(15));
+					reco.setResume(rs.getString(16));
+					reco.setIsRecommended(rs.getString(17));
+					reco.setCurrStatus(rs.getString(18));
+
+					// 当前处理的HR的ID进行查询姓名
+					sql = "select emp_fullname from  emp_details_table where emp_id=?";
+					pstm = conn.prepareStatement(sql);
+					pstm.setInt(1, rs.getInt(4));
+					rs1 = pstm.executeQuery();
+					String empFullName = null;
+					if (rs1.next()) {
+						empFullName = rs1.getString("emp_fullname");
+					}
+					System.out.println("当前处理HR的姓名：" + empFullName);
+					reco.setCurrentHrName(empFullName);
+
+					/*******************************/
+					String fullname = rs.getString("fullname");
+					EmpDetails empdt = new EmpDetails();
+					empdt.setFullname(fullname);
+					Employee emp = new Employee();
+					emp.setEmpDetails(empdt);
+					reco.setEmployee(emp);
+					list.add(reco);
+
+				}
+				
+			} else {// 其他身份
+
+				// 首先判断该用户的详情表是否为空
+				sql = "select emp_fullname from emp_details_table where emp_id=?";
+				pstm = conn.prepareStatement(sql);
+				pstm.setInt(1, empId);
+				rs = pstm.executeQuery();
+				EmpDetails empdt = null;
+				Employee emp = null;
+				String fullname = null;
+				if (rs.next()) {
+					fullname = rs.getString(1);
+				}
+				if (fullname != null) {
+					empdt = new EmpDetails();
+					empdt.setFullname(fullname);
+					emp = new Employee();
+					emp.setEmpDetails(empdt);
+				}
+				 sql = "select count(*) from (select tt.* from (select rt.*,edt.emp_fullname as fullname,ct.cate_name as jobName,ctt.cate_name as majorName "
+						+ "from recommender_table rt left outer join emp_details_table edt on(rt.emp_id=edt.emp_id)  "
+						+ "join categories_table ct on(rt.job_id=ct.cate_id) and ct.is_what_cate='B' "
+						+ "join categories_table ctt on (ctt.cate_id=rt.major_id) and ctt.is_what_cate='C') tt "
+						+ "where tt.emp_id=?)";
+				pstm = conn.prepareStatement(sql);
+				pstm.setInt(1, empId);
+				rs = pstm.executeQuery();
+				if(rs.next()){
+					 totalRows = rs.getInt(1);// 一共有多少条记录
+				}
+				 totalPage =(totalRows-1)/5+1 ;// 一共有几页
+				System.out.println("总的记录数" + totalRows);
+				System.out.println("总的页数" + totalPage);
+				sql="select * from (select e.*,rownum r from(select tt.* from (select rt.*,edt.emp_fullname as fullname,ct.cate_name as jobName,ctt.cate_name as majorName "
+						+ "from recommender_table rt left outer join emp_details_table edt on(rt.emp_id=edt.emp_id)  "
+						+ "join categories_table ct on(rt.job_id=ct.cate_id) and ct.is_what_cate='B' "
+						+ "join categories_table ctt on (ctt.cate_id=rt.major_id) and ctt.is_what_cate='C') tt "
+						+ "where tt.emp_id=?)e) where r>(?-1)*5 and r<=?*5";
+				pstm = conn.prepareStatement(sql);
+				pstm.setInt(1, empId);
+				pstm.setInt(2, curentPage);
+				pstm.setInt(3, curentPage);
+				rs = pstm.executeQuery();
+				int currentHrId = 0;
+				while (rs.next()) {
+					Recommender reco = new Recommender();
+					reco.setRecoId(rs.getInt(1));
+					reco.setRecoName(rs.getString(2));
+					reco.setEmpId(rs.getInt(3));
+					reco.setCurrentHrId(rs.getInt(4));
+					// reco.setJobId(rs.getInt(5));// 职位
+					reco.setJobCate(new Categories(rs.getString("jobName"),
+									"B"));
+					// reco.setMajorId(rs.getInt(6));// 专业
+					reco.setMajorCate(new Categories(rs.getString("majorName"),
+							"C"));
+					reco.setSex(rs.getString(7));
+					reco.setPic(rs.getString(8));
+					reco.setRecoDegree(rs.getString(9));
+					reco.setGraduatedFrom(rs.getString(10));
+					reco.setIsGraduated(rs.getString(11));
+					reco.setGraduatedTime(rs.getDate(12));
+					reco.setPhone(rs.getString(13));
+					reco.setMail(rs.getString(14));
+					reco.setSkills(rs.getString(15));
+					reco.setResume(rs.getString(16));
+					reco.setIsRecommended(rs.getString(17));
+					reco.setCurrStatus(rs.getString(18));
+					if (emp != null) {
+						reco.setEmployee(emp);
+						currentHrId = rs.getInt(4);
+						sql = "select emp_fullname from  emp_details_table where emp_id=?";
+						pstm = conn.prepareStatement(sql);
+						pstm.setInt(1, currentHrId);
+						rs1 = pstm.executeQuery();
+						String empFullName = null;
+						if (rs1.next()) {
+							empFullName = rs1.getString("emp_fullname");
+						}
+						System.out.println("当前处理HR的姓名：" + empFullName);
+						reco.setCurrentHrName(empFullName);
+
+					}
+					list.add(reco);
+				}
+			
+
+			}
 			SplitPage sp = new SplitPage();
 			sp.setTotalRows(totalRows);
 			sp.setTotalPage(totalPage);
+			sp.setRecoList(list);
 			return sp;
+			
 		} catch (SQLException e) {
 			e.printStackTrace();
 
@@ -605,6 +649,20 @@ public class RecoDaoImpl implements RecoDao {
 		}
 		return null;
 	}
+	/*
+	 * 根据用户的登录的身份查询被推荐的信息，用户为admin可以查询所有的被推荐人的信息 ，其他用户只能查看到自己所推荐的被推荐人的信息。
+	 */
+	public List<Recommender> getRecommender(int empId) {
+		try {
+			
 
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			DBConnection.close(pstm, conn, rs1);
+			DBConnection.close(pstm, conn, rs);
+		}
+		return null;
+	}
 
 }

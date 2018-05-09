@@ -16,6 +16,6 @@ public interface RecoService {
    boolean updateRecommender(String[]recoId,int hrId);
    List<Recommender> getRecommender(int empId);
    List<Recommender> getReco(int empId);//查询自己的推荐的人
-   List<Recommender> getRecommenderCurrStatus(int empId);
-   SplitPage getAllReco(int curentPage);
+   SplitPage getRecommenderCurrStatus(int curentPage,int empId);
+   SplitPage getAllReco(int curentPage,int empId);
 }

@@ -112,37 +112,28 @@ public class RecoController {
 				if (request.getSession().getAttribute("user") != null) {
 					int empId = ((Employee) request.getSession().getAttribute(
 							"user")).getEmpId();
+					String curentPage=request.getParameter("currentPage");
 					// 然后根据empId查询你所推荐的人
 					System.out.println(empId);
 					RecoService recoService = new RecoServiceImpl();
 					
-					String curentPage = "1";
-					System.out.println("当前页" + curentPage);
-					int curentPage01=Integer.parseInt(curentPage);
+//					String curentPage = "1";
+//					System.out.println("当前页" + curentPage);
+//					int curentPage01=Integer.parseInt(curentPage);
 					if (curentPage != null) {
 						SplitPage creditSp = new SplitPage();
-						creditSp = recoService.getAllReco(curentPage01);
+						creditSp = recoService.getAllReco(Integer.parseInt(curentPage),empId);
 						HttpSession session = request.getSession();
 						session.setAttribute("empSp", creditSp);
-						session.setAttribute("curentPage", curentPage);
+						session.setAttribute("curentPage",curentPage);
 					} else {
 						SplitPage creditSp = new SplitPage();
-						creditSp = recoService.getAllReco(curentPage01);
+						creditSp = recoService.getAllReco(1,empId);
 						HttpSession session = request.getSession();
 						session.setAttribute("empSp", creditSp);
-
+						session.setAttribute("curentPage",1);
 					}
 					
-					
-					List<Recommender> recoList = recoService
-							.getRecommender(empId);
-					for (Recommender reco : recoList) {
-
-						System.out.println("被推荐人姓名" + reco.getRecoName());
-						System.out.println("被推荐人Id" + reco.getRecoId());
-
-					}
-					request.setAttribute("recoList", recoList);
 					request.getRequestDispatcher(
 							"/WEB-INF/jsp/reco/showReco.jsp").forward(request,
 							response);
@@ -155,31 +146,24 @@ public class RecoController {
 					System.out.println("被推荐的当前状态········");
 					int empId = ((Employee) request.getSession().getAttribute(
 							"user")).getEmpId();
+					String curentPage=request.getParameter("currentPage");
 					// 然后根据empId查询你所推荐的人
 					System.out.println(empId);
 					RecoService recoService = new RecoServiceImpl();
-					
-					String curentPage = "1";
-					System.out.println("当前页" + curentPage);
-					int curentPage01=Integer.parseInt(curentPage);
 					if (curentPage != null) {
 						SplitPage creditSp = new SplitPage();
-						creditSp = recoService.getAllReco(curentPage01);
+						creditSp = recoService.getRecommenderCurrStatus(Integer.parseInt(curentPage),empId);
 						HttpSession session = request.getSession();
 						session.setAttribute("empSp", creditSp);
 						session.setAttribute("curentPage", curentPage);
 					} else {
 						SplitPage creditSp = new SplitPage();
-						creditSp = recoService.getAllReco(curentPage01);
+						creditSp = recoService.getRecommenderCurrStatus(1,empId);
 						HttpSession session = request.getSession();
 						session.setAttribute("empSp", creditSp);
-
+						session.setAttribute("curentPage", 1);
 					}
 					
-					
-					List<Recommender> recoList = recoService
-							.getRecommenderCurrStatus(empId);
-					request.setAttribute("recolist", recoList);
 					request.getRequestDispatcher("/WEB-INF/jsp/reco/getRecommenderCurrent.jsp").forward(request, response);
 				}else if("deleteRecommender.do".equals(action)){
 					

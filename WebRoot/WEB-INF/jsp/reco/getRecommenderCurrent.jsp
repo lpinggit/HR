@@ -127,7 +127,7 @@
 											</div>
 										</td>
 									</tr>
-									<c:forEach var="reco" items="${requestScope.recolist}">
+									<c:forEach var="reco" items="${sessionScope.empSp.recoList}">
 										<tr>
 											<td height="20" bgcolor="#FFFFFF">
 												<div align="center">

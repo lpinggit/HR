@@ -31,9 +31,9 @@ public class RecoServiceImpl implements RecoService {
 		
 		return recoDao.getRecommender(empId);
 	}
-	public List<Recommender> getRecommenderCurrStatus(int empId) {
+	public SplitPage getRecommenderCurrStatus(int curentPage,int empId) {
 
-		return recoDao.getRecommenderCurrStatus(empId);
+		return recoDao.getRecommenderCurrStatus(curentPage,empId);
 	}
 	public boolean deleteRecommender(String [] recoId) {
 		
@@ -51,8 +51,8 @@ public class RecoServiceImpl implements RecoService {
 	public boolean Message(int empId) {
 		return recoDao.Message(empId);
 	}
-	public SplitPage getAllReco(int curentPage) {
-		return recoDao.getAllReco(curentPage);
+	public SplitPage getAllReco(int curentPage,int empId) {
+		return recoDao.getAllReco(curentPage,empId);
 	}
 
 }
