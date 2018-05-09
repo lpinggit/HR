@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config>
+	<url>jdbc:oracle:thin:@127.0.0.1:1521:orcl</url>
+	<username>lp</username>
+	<password>1</password>
+</config>

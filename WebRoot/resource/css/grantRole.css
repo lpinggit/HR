@@ -1,0 +1,75 @@
+#contenter #second #sec {
+	margin-left: 20px;
+	width: 200px;
+	margin-top: 40px;
+}
+#contenter #second #fourth {
+	width: 250px;
+	float: left;
+	height: 180px;
+	font-size: 14px;
+	font-family: Georgia, "Times New Roman", Times, serif;
+	margin-left: 50px;
+}
+#contenter #second #five {
+	height: 180px;
+	width: 250px;
+	float: right;
+	font-size: 14px;
+	font-family: Georgia, "Times New Roman", Times, serif;
+	margin-right: 38px;
+}
+#contenter #second #side4 {
+	height: 20px;
+	width: 200px;
+	margin-left: 240px;
+}
+
+#contenter #second {
+	padding-top: 10px;
+	padding-left: 10px;
+}
+#contenter #second #role {
+	width: 80px;
+	height: 15px;
+	border: 1px solid #09C;
+}
+#contenter #second #five #f-2 {
+	height: 35px;
+}
+#contenter #second #fourth #f-1 {
+	height: 35px;
+	font-size: 14px;
+}
+#contenter #second #f-1-1   {
+	width: 20px;
+	float: left;
+	margin-top: 8px;
+	padding-right: 5px;
+}
+#contenter #second #thi #thi1 {
+	width: 25px;
+	height: 25px;
+	float: left;
+	padding-top: 0px;
+	margin-top: 0px;
+}
+#contenter #second #thi #thi2 {
+	width: 200px;
+}
+#contenter #second #f-1-2   {
+	float: left;
+	margin-top: 10px;
+}
+
+#contenter #second #thi {
+	padding-top: 5px;
+	padding-bottom: 5px;
+	border-bottom-width: 2px;
+	border-bottom-style: solid;
+	border-bottom-color: #837DE6;
+}
+#contenter #second #thi #six {
+	width: 120px;
+	float: right;
+}
